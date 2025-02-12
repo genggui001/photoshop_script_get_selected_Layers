@@ -3,7 +3,17 @@ try {
     doc.suspendHistory("Rename Layers", "processLayers()");
 
     function processLayers() {
-        alert(selectedLayers.name);
+        var selectedLayers = getSelectedLayers();
+        
+        if (selectedLayers.length === 0) {
+            alert("请先选择要处理的图层");
+            return;
+        }
+
+        for (var i = 0; i < selectedLayers.length; i++) {
+            var layer = selectedLayers[i];
+            alert(layer.name);
+        }
     }
 
     // 获取所有选中图层（支持多选）
