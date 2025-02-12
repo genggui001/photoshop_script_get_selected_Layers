@@ -16,34 +16,35 @@ try {
         }
     }
 
-    // 获取所有选中图层（支持多选）
+    // 获取所有选中图层（支持多选+图层组嵌套）
     function getSelectedLayers() {
         var ActLay = app.activeDocument.activeLayer;
         ActLay.allLocked = true;
         var selLayers = new Array();
         
         // 遍历所有顶层图层
-        traverseLayers(app.activeDocument.layers, selLayers);
+        traverseLayers(app.activeDocument.layers, false, selLayers);
         
         ActLay.allLocked = false;
         return selLayers;
     }
 
     // 递归遍历图层及图层组
-    function traverseLayers(layers, selLayers) {
+    function traverseLayers(layers, parnetLocked, selLayers) {
         for (var i = 0; i < layers.length; i++) {
             var layer = layers[i];
-
+            
             // 如果是图层组（LayerSet），则递归处理
             if (layer.typename == "LayerSet") {
-                traverseLayers(layer.layers, selLayers);
+                traverseLayers(layer.layers, parnetLocked || layer.allLocked, selLayers);
             }
             
-            if (layer.allLocked == true) {
+            if (parnetLocked || layer.allLocked) {
                 selLayers.push(layer);
             }
         }
     }
+
 
 } catch (e) {
     alert("错误: " + e.message + "\n行号: " + e.line);
